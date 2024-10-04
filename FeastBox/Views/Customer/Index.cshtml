@@ -1,0 +1,51 @@
+﻿@model IEnumerable<FeastBox.Models.Order>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="container my-4">
+    <h1 class="text-center">My Orders</h1>
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Total Amount</th>
+                <th>Order Items</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.OrderId</td>
+                    <td>@order.OrderDate.ToString("MM/dd/yyyy")</td>
+                    <td>@order.TotalAmount.ToString("C")</td>
+                    <td>
+                        <ul class="list-unstyled">
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <li>
+                                    <strong>@item.Product.Name</strong> - @item.Quantity x @item.Price.ToString("C")
+                                </li>
+                            }
+                        </ul>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    body {
+        background-color: #f9f9f9;
+    }
+    h1 {
+        margin-bottom: 20px;
+    }
+    .table {
+        background-color: white;
+    }
+</style>

@@ -1,0 +1,134 @@
+﻿@model IEnumerable<Ingredient>
+
+@{
+    ViewBag.Title = "List of Restaurant Components";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #f8f9fa, #f0f4f7);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            width: 300px;
+            border: none;
+            border-radius: 50%; /* تغيير إلى دائري */
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+            position: relative; /* لجعل التأثيرات الحركية تعمل بشكل صحيح */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .card:hover {
+                transform: scale(1.1) rotate(5deg); /* تأثير تكبير مع دوران */
+            }
+
+            .card img {
+                height: 150px; /* تقليل حجم الصورة */
+                width: 150px; /* تأكيد أن الصورة دائرية */
+                border-radius: 50%; /* يجعل الصورة دائرية */
+                object-fit: cover;
+                border: 5px solid #f8f9fa; /* إطار للصورة */
+                transition: border-color 0.3s; /* تأثير تغيير لون الإطار */
+            }
+
+            .card:hover img {
+                border-color: #007bff; /* تغيير لون الإطار عند التحويم */
+            }
+
+        .card-body {
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .btn {
+            margin: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+            .btn:hover {
+                transform: scale(1.1);
+            }
+
+            .btn i {
+                margin-right: 5px;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Components</h1>
+        @if (!User.IsInRole("Customer"))
+        {
+            <div class="text-end mb-4">
+                <a class="btn btn-primary" asp-action="Create">
+                    <i class="fas fa-plus icon"></i>Create New Components
+                </a>
+            </div>
+        }
+
+        <div class="card-container">
+            @foreach (Ingredient i in Model)
+            {
+                <div class="card">
+                    <img src="~/images/Screenshot_1-10-2024_181133_.jpeg?text=@i.Name" alt="@i.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@Html.DisplayFor(modelItem => i.Name)</h5>
+
+                        @if (!User.IsInRole("Customer"))
+                        {
+                            <a class="btn btn-primary" asp-action="Details" asp-route-id="@i.IngredientId">
+                                <i class="fas fa-info-circle icon"></i>Details
+                            </a>
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@i.IngredientId">
+                                    <i class="fas fa-edit icon"></i>Edit
+                                </a>
+
+                                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@i.IngredientId">
+                                    <i class="fas fa-trash icon"></i>Delete
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

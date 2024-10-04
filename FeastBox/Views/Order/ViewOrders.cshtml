@@ -1,0 +1,83 @@
+﻿@model IEnumerable<FeastBox.Models.Order>
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="container my-4">
+    <h1 class="text-center">My Orders</h1>
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Total Amount</th>
+                <th>Order Items</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.OrderId</td>
+                    <td>@order.OrderDate.ToString("MM/dd/yyyy")</td>
+                    <td>@order.TotalAmount.ToString("C")</td>
+                    <td>
+                        <button class="btn btn-link" onclick="toggleItems(this)">View Items</button>
+                        <ul class="list-unstyled d-none">
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <li>
+                                    <strong>@item.Product.Name</strong> - @item.Quantity x @item.Price.ToString("C")
+                                </li>
+                            }
+                        </ul>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    body {
+        background-color: #f9f9f9;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .table {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f2f2f2; /* Alternating row color */
+    }
+
+    .btn-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+</style>
+
+<script>
+    function toggleItems(button) {
+        const itemsList = button.nextElementSibling;
+        if (itemsList.classList.contains('d-none')) {
+            itemsList.classList.remove('d-none');
+            button.innerText = 'Hide Items';
+        } else {
+            itemsList.classList.add('d-none');
+            button.innerText = 'View Items';
+        }
+    }
+</script>

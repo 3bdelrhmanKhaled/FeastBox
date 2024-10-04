@@ -1,0 +1,60 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+<ul class="navbar-nav ms-auto">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            @{
+                int cartCount = 0;
+                if (Context.Session.Get<OrderViewModel>("OrderViewModel") != null)
+                {
+                    OrderViewModel model = Context.Session.Get<OrderViewModel>("OrderViewModel");
+                    cartCount = model.OrderItems.Sum(product => product.Quantity);
+                }
+            }
+            <a class="nav-link position-relative" asp-action="Cart" asp-controller="Order">
+                <i class="fas fa-shopping-cart" style="font-size: 1.5rem;"></i>
+                <span class="ms-2">Cart</span>
+                @if (cartCount > 0)
+                {
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                        @cartCount
+                        <span class="visually-hidden">Cart Quantity</span>
+                    </span>
+                }
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+        </li>
+
+        @* هنا نضيف عرض الدور *@
+        <li class="nav-item">
+            @{
+                var roles = await UserManager.GetRolesAsync(await UserManager.GetUserAsync(User));
+                string roleText = roles.Contains("Admin") ? "Admin" : "Customer";
+            }
+            <span class="nav-link">Role: @roleText</span>
+        </li>
+
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link">LogOut</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Register">
+                Register
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+        </li>
+    }
+</ul>

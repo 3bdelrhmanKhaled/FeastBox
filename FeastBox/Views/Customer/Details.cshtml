@@ -1,0 +1,21 @@
+﻿@model FeastBox.Models.Customer
+
+
+h2>@Model.Name's Orders</h2>
+
+@if (Model.Orders.Any())
+{
+    <ul>
+        @foreach (var order in Model.Orders)
+        {
+            <li>
+                Order Date: @order.OrderDate.ToString("yyyy-MM-dd") <br />
+                Total Amount: @order.TotalAmount
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No orders found for this customer.</p>
+}

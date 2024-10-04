@@ -1,0 +1,119 @@
+﻿@model Product
+
+@{
+    ViewBag.Title = $"{ViewBag.Operation} Menu Item";
+}
+
+<div class="container my-4">
+    <h1 class="text-center mb-4">@ViewBag.Operation Menu Item</h1>
+    <form asp-action="AddEdit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="ProductId" />
+        <input type="hidden" asp-for="CategoryId" />
+
+        <div class="form-group mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" name="Name" required />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" name="Description" rows="3" required></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Price" class="form-label"></label>
+            <input asp-for="Price" class="form-control" name="Price" type="number" step="0.01" required />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Stock" class="form-label">Quantity In Stock</label>
+            <input asp-for="Stock" class="form-control" name="Stock" type="number" min="0" required />
+            <span asp-validation-for="Stock" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-4">
+            <label for="imageUpload" class="form-label">Upload Image</label>
+            <input type="file" class="form-control" id="imageUpload" name="ImageFile" asp-for="ImageFile" accept="image/*" required />
+        </div>
+
+        <h5 class="mb-3">Select Category</h5>
+        <div class="row mb-4">
+            <div class="col">
+                @foreach (Category category in ViewBag.Categories)
+                {
+                    <div class="form-check">
+                        @{
+                            bool isChecked = Model.CategoryId == category.CategoryId;
+                        }
+                        <input type="radio" class="form-check-input" id="@category.CategoryId" name="catId" value="@category.CategoryId" @(isChecked ? "checked" : "") required />
+                        <label class="form-check-label" for="@category.CategoryId">@category.Name</label>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <h5 class="mb-3">Select Ingredients</h5>
+        <div class="row mb-4">
+            <div class="col">
+                @foreach (Ingredient ingredient in ViewBag.Ingredients)
+                {
+                    <div class="form-check">
+                        @{
+                            bool isChecked = Model.ProductIngredients != null && Model.ProductIngredients.Any(i => i.IngredientId == ingredient.IngredientId);
+                        }
+                        <input type="checkbox" class="form-check-input" id="@ingredient.IngredientId" name="ingredientIds" value="@ingredient.IngredientId" @(isChecked ? "checked" : "") />
+                        <label class="form-check-label" for="@ingredient.IngredientId">@ingredient.Name</label>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary btn-animated">Save</button>
+            <a asp-action="Index" asp-controller="Product" class="btn btn-outline-dark">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById("imageUpload").addEventListener("change", function() {
+        alert("Image selected successfully.");
+    });
+
+    document.querySelectorAll('.btn-animated').forEach(function(button) {
+        button.addEventListener('mouseover', function() {
+            button.style.transform = 'scale(1.1)';
+        });
+
+        button.addEventListener('mouseout', function() {
+            button.style.transform = 'scale(1)';
+        });
+    });
+</script>
+
+<style>
+    body {
+        background-color: #f7f7f7;
+    }
+
+    .form-label {
+        font-weight: bold;
+    }
+
+    .form-control {
+        border-radius: 0.25rem;
+        transition: border 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+        }
+
+    .btn-animated {
+        transition: transform 0.3s ease;
+    }
+</style>

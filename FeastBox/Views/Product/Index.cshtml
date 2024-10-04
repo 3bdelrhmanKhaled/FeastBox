@@ -1,0 +1,153 @@
+﻿@model IEnumerable<Product>
+
+@{
+    ViewBag.Title = "FeastBox Menu Items";
+}
+
+@functions {
+    string GetDeleteModalId(Product prod)
+    {
+        return "#deleteModal" + prod.ProductId;
+    }
+
+    string GetModalId(Product prod)
+    {
+        return "deleteModal" + prod.ProductId;
+    }
+
+    bool IsUserCustomer()
+    {
+        return User.IsInRole("Customer");
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #f7f9fc, #ffffff);
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+            .card:hover {
+                transform: scale(1.05);
+            }
+
+        .card-img-top {
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .btn {
+            margin-top: 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+            .btn:hover {
+                transform: scale(1.05);
+            }
+
+        .modal .modal-content {
+            border-radius: 15px;
+        }
+
+        .fixed-image-height {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .text-muted {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>FeastBox Menu Items</h2>
+
+        @if (!IsUserCustomer())
+        {
+            <div class="text-end mb-4">
+                <a asp-action="AddEdit" asp-controller="Product" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create New Item
+                </a>
+            </div>
+        }
+
+        <div class="row">
+            @foreach (Product prod in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="@Url.Content("~/images/" + prod?.ImageUrl)" class="card-img-top fixed-image-height" alt="@prod.Description">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@prod.Name</h5>
+                            <p class="card-text text-muted">@prod.Description</p>
+                            <p class="card-text fw-bold">@prod.Price.ToString("C")</p>
+                            <p class="card-text">Units on Hand: <span class="fw-bold">@prod.Stock</span></p>
+
+                            @if (!IsUserCustomer())
+                            {
+                                <a class="btn btn-info" asp-controller="Product" asp-action="AddEdit" asp-route-id="@prod.ProductId">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+
+                                <!-- Delete button -->
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@prod.ProductId">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+
+                                <!-- Delete confirmation modal -->
+                                <div class="modal fade" id="deleteModal-@prod.ProductId" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete this product: <strong>@prod.Name</strong>?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <form asp-action="Delete" asp-controller="Product" method="post">
+                                                    <input type="hidden" name="id" value="@prod.ProductId" />
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
